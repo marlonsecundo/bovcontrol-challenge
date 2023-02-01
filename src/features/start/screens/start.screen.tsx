@@ -1,32 +1,31 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {View, Text, Image} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import BovControlIcon from '../../../assets/icons/bovcontrol-icon';
-import Checklist from '../../../database/models/checklist';
+import {ButtonText, StyledButton} from '../../../shared/components/buttons';
+import {ScreenContainer} from '../../../shared/components/screen-container';
 import {useService} from '../../../shared/contexts/serivce.context';
 import {Column, CustomContainer, Row} from '../../../shared/styles/layout';
 import {
   ChecklistProvider,
   useChecklist,
 } from '../../checklist/contexts/checklist.context';
-import {
-  Container,
-  Headline,
-  StartButton,
-  StartText,
-  Title,
-} from '../styles/start.styles';
+import {Headline, Title} from '../styles/start.styles';
 
 const StartScreen: React.FC = () => {
   const {create, findAll, destroy, update, findById} = useChecklist();
 
+  const navigation = useNavigation();
+
   const {checklistService} = useService();
 
-  const handleStartButton = async () => {};
+  const handleStartButton = async () => {
+    navigation.navigate('/checklist', {});
+  };
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <Container>
+      <ScreenContainer>
         <Column flx={1}>
           <Row algnI="center" style={{}}>
             <BovControlIcon width={35} height={35}></BovControlIcon>
@@ -36,12 +35,12 @@ const StartScreen: React.FC = () => {
           <Headline>Desafio Mobile Checklist Farmer</Headline>
 
           <CustomContainer flx={1} flxDir="column-reverse">
-            <StartButton onPress={handleStartButton}>
-              <StartText>Start</StartText>
-            </StartButton>
+            <StyledButton onPress={handleStartButton}>
+              <ButtonText>Start</ButtonText>
+            </StyledButton>
           </CustomContainer>
         </Column>
-      </Container>
+      </ScreenContainer>
     </SafeAreaView>
   );
 };

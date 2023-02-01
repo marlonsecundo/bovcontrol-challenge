@@ -1,4 +1,5 @@
 import {createRealmContext} from '@realm/react';
+
 import Realm from 'realm';
 import Checklist from './models/checklist';
 
@@ -8,16 +9,18 @@ import {
   locationSchema,
   toSchema,
 } from './models/checklist';
+import {OfflineAction} from './models/offline-action';
 
 const config: Realm.Configuration = {
   schema: [
+    OfflineAction.schema,
     Checklist.schema,
     farmerSchema,
     fromSchema,
     locationSchema,
     toSchema,
   ],
-  schemaVersion: 2,
+  schemaVersion: 9,
 };
 
 export const RealmContext = createRealmContext(config);

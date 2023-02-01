@@ -1,7 +1,7 @@
 import Checklist from '../models/checklist';
 
-type findReturn = (Checklist & Realm.Object<unknown, never>) | null;
-type findAllReturn = Realm.Results<Checklist & Realm.Object<unknown, never>>;
+type RealmData = Record<string, unknown>;
+const {UUID} = Realm.BSON;
 
 class ChecklistRepository {
   realm: Realm;
@@ -9,42 +9,43 @@ class ChecklistRepository {
     this.realm = realm;
   }
 
-  findAll = (): Promise<findAllReturn> => {
+  findAll = (): Promise<RealmData[]> => {
     return new Promise(resolve => {
-      const checklists = this.realm.objects<Checklist>(Checklist.schema.name);
+      const checklists = this.realm.objects(Checklist.schema.name);
 
-      resolve(checklists);
+      resolve(checklists.toJSON());
     });
   };
 
-  findById = (_id: Realm.BSON.ObjectId): Promise<findReturn> => {
+  findById = (id: string): Promise<RealmData | null> => {
     return new Promise(resolve => {
-      const checklists = this.realm.objectForPrimaryKey<Checklist>(
-        Checklist.schema.name,
-        _id,
-      );
+      const items = this.realm
+        .objects(Checklist.schema.name)
+        .filtered('id == $0', id);
 
-      resolve(checklists);
+      if (items.length > 0) {
+        return resolve(items[0].toJSON());
+      }
+
+      resolve(null);
     });
   };
 
-  create = (checklist: Checklist): Promise<Checklist> => {
+  create = (checklist: Checklist): Promise<RealmData> => {
     return new Promise(resolve => {
       this.realm.write(() => {
-        const result = this.realm.create<Checklist>(
-          Checklist.schema.name,
-          checklist,
-        );
+        const result = this.realm.create(Checklist.schema.name, {
+          ...checklist,
+          _id: new UUID(),
+        });
 
-        resolve(result);
+        resolve(result.toJSON());
       });
     });
   };
 
-  update = async (data: Checklist): Promise<Checklist> => {
-    const checklist = await this.findById(
-      data._id ?? new Realm.BSON.ObjectId('-1'),
-    );
+  update = async (data: Checklist): Promise<RealmData> => {
+    const checklist = await this.findById(data.id ?? '-1');
 
     return new Promise(resolve => {
       this.realm.write(() => {
@@ -63,14 +64,14 @@ class ChecklistRepository {
     });
   };
 
-  delete = async (id: Realm.BSON.ObjectId) => {
+  delete = async (id: string): Promise<number> => {
     const checklist = await this.findById(id);
 
     return new Promise(resolve => {
       this.realm.write(() => {
         this.realm.delete(checklist);
 
-        resolve(null);
+        resolve(200);
       });
     });
   };

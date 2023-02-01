@@ -1,3 +1,11 @@
+import 'react-native-get-random-values';
+
+import {LogBox} from 'react-native';
+
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+]);
+
 import {ThemeProvider} from 'styled-components/native';
 import Routes from './src/routes';
 import theme from './src/shared/styles/theme';
@@ -7,6 +15,8 @@ import {RealmProvider} from './src/database/realm.context';
 import {RepositoryProvider} from './src/database/repository.context';
 import {ServiceProvider} from './src/shared/contexts/serivce.context';
 import {View} from 'react-native';
+import Toast from 'react-native-toast-message';
+import ConnectionBar from './src/shared/components/connection-bar';
 
 export default function App() {
   // return <View></View>;
@@ -17,7 +27,9 @@ export default function App() {
       <RepositoryProvider>
         <ServiceProvider>
           <ThemeProvider theme={theme}>
+            <ConnectionBar></ConnectionBar>
             <Routes></Routes>
+            <Toast />
           </ThemeProvider>
         </ServiceProvider>
       </RepositoryProvider>

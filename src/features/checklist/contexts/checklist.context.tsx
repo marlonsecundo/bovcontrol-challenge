@@ -1,20 +1,20 @@
-import React, {createContext, useContext, useState} from 'react';
+import React, {createContext, useCallback, useContext, useState} from 'react';
 import Checklist from '../../../database/models/checklist';
 import {useRepository} from '../../../database/repository.context';
 import {useService} from '../../../shared/contexts/serivce.context';
+import {useIsOffline} from '../../../shared/hooks/useIsOffline';
 
 interface ProviderProps {
   children?: React.ReactNode;
 }
 
 interface ChecklistContextProps {
-  checklist: Checklist[];
+  checklists: Checklist[];
 
   create: (checklist: Checklist) => Promise<Checklist>;
   findAll: () => Promise<Checklist[]>;
   update: (checklist: Checklist) => Promise<Checklist>;
-  destroy: (_id: Realm.BSON.ObjectId) => void;
-  findById: (_id: Realm.BSON.ObjectId) => Promise<Checklist>;
+  destroy: (id: string) => void;
 }
 
 const ChecklistContext = createContext<ChecklistContextProps>(
@@ -22,49 +22,107 @@ const ChecklistContext = createContext<ChecklistContextProps>(
 );
 
 export const ChecklistProvider: React.FC<ProviderProps> = ({children}) => {
-  const [checklist, setChecklists] = useState([]);
+  const isOffline = useIsOffline();
 
+  const [checklists, setChecklists] = useState<Checklist[]>([]);
   const {checklistService} = useService();
-  const {checklistRepository} = useRepository();
+  const {checklistRepository, offlineActionRepository} = useRepository();
+
+  const findAll = async (): Promise<Checklist[]> => {
+    let result: Checklist[] | null;
+
+    if (isOffline) {
+      let realmResult = await checklistRepository.findAll();
+
+      result = Checklist.fromJSONList(realmResult);
+    } else {
+      result = await checklistService.findAll();
+    }
+
+    setChecklists(result ?? []);
+
+    return result ?? [];
+  };
 
   const create = async (checklist: Checklist): Promise<Checklist> => {
-    const newChecklist = await checklistRepository.create(checklist);
+    let newChecklist: Checklist;
+
+    if (isOffline) {
+      newChecklist = Checklist.fromJSON(
+        await checklistRepository.create(checklist),
+      );
+
+      await offlineActionRepository.create({
+        payload: newChecklist.convertToJSON(),
+        syncStatus: 'waiting',
+        type: 'create',
+      });
+    } else {
+      newChecklist = await checklistService.create(checklist);
+    }
+
+    setChecklists([...checklists, newChecklist]);
 
     return newChecklist;
   };
 
-  const findAll = async (): Promise<Checklist[]> => {
-    const result = await checklistRepository.findAll();
+  const destroy = async (id: string) => {
+    let status: number | null;
+    if (isOffline) {
+      status = await checklistRepository.delete(id);
 
-    return result as unknown as Checklist[];
-  };
+      await offlineActionRepository.create({
+        payload: {id},
+        syncStatus: 'waiting',
+        type: 'delete',
+      });
+    } else {
+      status = await checklistService.delete(id);
+    }
 
-  const findById = async (_id: Realm.BSON.ObjectId): Promise<Checklist> => {
-    const result = await checklistRepository.findById(_id);
+    if (status) {
+      const result = checklists.filter(c => c.id !== id);
 
-    return result as Checklist;
-  };
-
-  const destroy = async (_id: Realm.BSON.ObjectId) => {
-    await checklistRepository.delete(_id);
-    console.table({msg: 'deu certo'});
+      setChecklists(result);
+    }
   };
 
   const update = async (checklist: Checklist): Promise<Checklist> => {
-    const newChecklist = await checklistRepository.update(checklist);
+    let updatedChecklist: Checklist;
 
-    return newChecklist;
+    if (isOffline) {
+      updatedChecklist = Checklist.fromJSON(
+        await checklistRepository.update(checklist),
+      );
+
+      await offlineActionRepository.create({
+        payload: updatedChecklist.convertToJSON(),
+        syncStatus: 'waiting',
+        type: 'update',
+      });
+    } else updatedChecklist = await checklistService.update(checklist);
+
+    const result = checklists.map(c => {
+      if (c.id === updatedChecklist.id) {
+        return updatedChecklist;
+      }
+
+      return c;
+    });
+
+    setChecklists(result);
+
+    return updatedChecklist;
   };
 
   return (
     <ChecklistContext.Provider
       value={{
-        checklist,
-        create,
-        update,
-        findAll,
-        destroy,
-        findById,
+        checklists,
+        create: useCallback(create, [isOffline]),
+        update: useCallback(update, [isOffline]),
+        findAll: useCallback(findAll, [isOffline]),
+        destroy: useCallback(destroy, [isOffline]),
       }}>
       {children}
     </ChecklistContext.Provider>

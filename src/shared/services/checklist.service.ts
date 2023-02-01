@@ -25,7 +25,7 @@ export class ChecklistService {
     return Checklist.fromJSON(result?.data);
   }
 
-  async create(checklist: Checklist): Promise<Checklist | null> {
+  async create(checklist: Checklist): Promise<Checklist> {
     const result = await this.axiosAPI.post('/checklist', {
       checklists: [checklist.toJsonAPI()],
     });
@@ -34,7 +34,7 @@ export class ChecklistService {
 
     return checklist;
   }
-  async update(checklist: Checklist): Promise<Checklist | null> {
+  async update(checklist: Checklist): Promise<Checklist> {
     const result = await this.axiosAPI.put(
       `/checklist/${checklist.id}`,
       checklist.toJsonAPI(),

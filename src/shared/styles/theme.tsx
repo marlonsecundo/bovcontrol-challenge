@@ -1,5 +1,5 @@
-import { DarkTheme, DefaultTheme, Theme } from "@react-navigation/native";
-import { rfValue, rfValuePX } from "../../utils/responsive-fontsize";
+import {DarkTheme, DefaultTheme, Theme} from '@react-navigation/native';
+import {rfValue, rfValuePX} from '../../utils/responsive-fontsize';
 
 export interface BovTheme extends Theme {
   colors: {
@@ -10,30 +10,32 @@ export interface BovTheme extends Theme {
     primary: string;
     text: string;
     thrid: string;
+    cancel: string;
   };
 }
 
 export const lightTheme: BovTheme = {
   colors: {
-    background: "#FFFFFF",
-    border: "transparent",
-    card: "#f7f9fc",
-    notification: "#44a1cb",
-    primary: "#44a1cb",
-    text: "#111111",
-    thrid: "#b1bcc6",
+    background: '#FFFFFF',
+    border: 'transparent',
+    card: '#E9F1F7',
+    notification: '#44a1cb',
+    primary: '#44a1cb',
+    text: '#111111',
+    thrid: '#b1bcc6',
+    cancel: '#DF2935',
   },
   dark: false,
 };
 
 export type ThemeColors =
-  | "primary"
-  | "background"
-  | "card"
-  | "text"
-  | "border"
-  | "notification"
-  | "third";
+  | 'primary'
+  | 'background'
+  | 'card'
+  | 'text'
+  | 'border'
+  | 'notification'
+  | 'third';
 
 export default {
   colors: lightTheme.colors,

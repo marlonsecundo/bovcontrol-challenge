@@ -1,5 +1,6 @@
 import Realm from 'realm';
 import snakecaseKeys from 'snakecase-keys';
+import 'react-native-get-random-values';
 
 export const farmerSchema = {
   name: 'farmer',
@@ -36,7 +37,7 @@ export const locationSchema = {
 };
 
 class Checklist {
-  _id?: Realm.BSON.ObjectId;
+  _id?: string;
   id?: string;
   type?: string;
   amountOfMilkProduced?: number;
@@ -56,51 +57,23 @@ class Checklist {
     latitude: number;
     longitude: number;
   };
-  created_at?: Date;
-  updated_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 
-  // constructor(
-  //   type: string,
-  //   amountOfMilkProduced: number,
-  //   numberOfCowsHead: number,
-  //   hadSupervision: boolean,
-  //   farmer: {name: string; city: string},
-  //   from: {name: string},
-  //   to: {name: string},
-  //   location: {
-  //     latitude: number;
-  //     longitude: number;
-  //   },
-  //   created_at: Date,
-  //   updated_at: Date,
-  //   id: string = '',
-  //   _id?: Realm.BSON.ObjectId,
-  // ) {
-  //   this._id = _id;
-  //   this.id = id;
-  //   this.type = type;
-  //   this.amountOfMilkProduced = amountOfMilkProduced;
-  //   this.numberOfCowsHead = numberOfCowsHead;
-  //   this.hadSupervision = hadSupervision;
-  //   this.farmer = farmer;
-  //   this.from = from;
-  //   this.to = to;
-  //   this.location = location;
-  //   this.created_at = created_at;
-  //   this.updated_at = updated_at;
-  // }
+  get hasID() {
+    return !!(this.id || this._id);
+  }
 
   static schema: Realm.ObjectSchema = {
     name: 'Checklist',
     primaryKey: '_id',
     properties: {
       _id: {
-        type: 'objectId',
+        type: 'uuid',
         indexed: true,
-        default: new Realm.BSON.ObjectId(),
       },
       id: {
-        type: 'int',
+        type: 'string',
         optional: true,
       },
       type: 'string',
@@ -111,8 +84,8 @@ class Checklist {
       from: 'from',
       to: 'to',
       location: 'location',
-      created_at: 'date',
-      updated_at: 'date',
+      createdAt: 'date',
+      updatedAt: 'date',
     },
   };
 
@@ -120,10 +93,42 @@ class Checklist {
     return snakecaseKeys(this);
   }
 
+  convertToJSON() {
+    return JSON.stringify(this);
+  }
+
   static fromJSON(json): Checklist {
+    let data;
+    if (typeof json === 'string') data = JSON.parse(json);
+    else data = json;
+
     const checklist = new Checklist();
-    Object.assign(checklist, json);
+    Object.assign(checklist, data);
     return checklist;
+  }
+
+  static fromJSONList(jsonList): Checklist[] {
+    return jsonList.map(c => {
+      const checklist = new Checklist();
+      Object.assign(checklist, c);
+      return checklist;
+    });
+  }
+
+  static generateDefault() {
+    return Checklist.fromJSON({
+      id: '',
+      type: 'BPA',
+      amountOfMilkProduced: 0,
+      numberOfCowsHead: 0,
+      hadSupervision: false,
+      farmer: {name: '', city: ''},
+      from: {name: ''},
+      to: {name: ''},
+      location: {latitude: 0, longitude: 0},
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
   }
 }
 

@@ -8,6 +8,13 @@ interface ContainerProps {
   flxDir?: string;
 }
 
+interface SpacerProps {
+  mt: string;
+  mb: string;
+  ml: string;
+  mr: string;
+}
+
 export const CustomContainer = styled.View<ContainerProps>`
   ${({jC, algnI, flx, mrg, flxDir}) => `
   justify-content: ${jC ?? 'flex-start'};
@@ -24,4 +31,13 @@ export const Row = styled(CustomContainer)`
 
 export const Column = styled(CustomContainer)`
   flex-direction: column;
+`;
+
+export const Spacer = styled.View<SpacerProps>`
+  ${({mt, mb, ml, mr}) => `
+    margin-top: ${mt ?? '0px'};
+    margin-bottom: ${mb ?? '0px'};
+    margin-left: ${ml ?? '0px'};
+    justify-right: ${mr ?? '0px'};
+`}
 `;
