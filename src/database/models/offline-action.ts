@@ -1,8 +1,10 @@
+import {BaseModel} from './base-model';
+
 export type SyncStatus = 'synced' | 'waiting' | 'error';
 
 export type ActionType = 'update' | 'create' | 'delete';
 
-export class OfflineAction {
+export class OfflineAction extends BaseModel {
   _id?: string;
   type?: ActionType;
   payload: any;
@@ -28,8 +30,12 @@ export class OfflineAction {
   };
 
   static fromJSON(json): OfflineAction {
+    let data;
+    if (typeof json === 'string') data = JSON.parse(json);
+    else data = json;
+
     const checklist = new OfflineAction();
-    Object.assign(checklist, json);
+    Object.assign(checklist, data);
     return checklist;
   }
 

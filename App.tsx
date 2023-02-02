@@ -17,6 +17,7 @@ import {ServiceProvider} from './src/shared/contexts/serivce.context';
 import {View} from 'react-native';
 import Toast from 'react-native-toast-message';
 import ConnectionBar from './src/shared/components/connection-bar';
+import OfflineActionHandler from './src/shared/handlers/offline-action.handler';
 
 export default function App() {
   // return <View></View>;
@@ -31,6 +32,10 @@ export default function App() {
             <Routes></Routes>
             <Toast />
           </ThemeProvider>
+
+          {/* HANDLERS */}
+
+          <OfflineActionHandler></OfflineActionHandler>
         </ServiceProvider>
       </RepositoryProvider>
     </RealmProvider>

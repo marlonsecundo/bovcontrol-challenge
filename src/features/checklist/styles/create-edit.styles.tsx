@@ -1,4 +1,3 @@
-import {Picker} from '@react-native-community/picker';
 import styled from 'styled-components/native';
 import {StyledButton} from '../../../shared/components/buttons';
 import {rfValuePX} from '../../../utils/responsive-fontsize';
@@ -25,4 +24,10 @@ export const GobackButton = styled(ConfirmButton)`
 
 export const DeleteButton = styled(ConfirmButton)`
   background-color: ${({theme}) => theme.colors.cancel};
+`;
+
+export const Container = styled.View`
+  flex: 1;
+  flex-direction: column-reverse;
+  min-height: ${rfValuePX(50)};
 `;

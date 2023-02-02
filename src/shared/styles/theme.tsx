@@ -18,7 +18,7 @@ export const lightTheme: BovTheme = {
   colors: {
     background: '#FFFFFF',
     border: 'transparent',
-    card: '#E9F1F7',
+    card: '#D1D1D1',
     notification: '#44a1cb',
     primary: '#44a1cb',
     text: '#111111',

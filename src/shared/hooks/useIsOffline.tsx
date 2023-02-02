@@ -8,11 +8,11 @@ export const useIsOffline = () => {
     const removeNetInfoSubscription = NetInfo.addEventListener(state => {
       const offline = !(state.isConnected && state.isInternetReachable);
 
-      setOfflineStatus(!offline);
+      setOfflineStatus(offline);
     });
 
     return () => removeNetInfoSubscription();
   }, []);
 
-  return isOffline;
+  return false;
 };

@@ -6,6 +6,8 @@ export const Container = styled.View`
   width: 100%;
 
   align-items: center;
+  position: absolute;
+  bottom: 0;
 `;
 
 export const CreateButton = styled(StyledButton)`

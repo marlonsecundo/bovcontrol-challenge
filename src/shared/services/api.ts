@@ -10,9 +10,21 @@ class API {
       baseURL: API_URL,
     });
 
+    // camelcase object from the API
     this.axiosApi.interceptors.response.use(
       this.camelCaseResponseConverter,
       function (error: any) {
+        return Promise.reject(error);
+      },
+    );
+
+    this.axiosApi.interceptors.request.use(
+      function (config) {
+        console.log(`REQUEST: ${config.method?.toUpperCase()} ${config.url}`);
+
+        return config;
+      },
+      function (error) {
         return Promise.reject(error);
       },
     );

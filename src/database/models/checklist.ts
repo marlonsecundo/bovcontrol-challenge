@@ -1,6 +1,7 @@
 import Realm from 'realm';
 import snakecaseKeys from 'snakecase-keys';
 import 'react-native-get-random-values';
+import {BaseModel} from './base-model';
 
 export const farmerSchema = {
   name: 'farmer',
@@ -36,7 +37,7 @@ export const locationSchema = {
   },
 };
 
-class Checklist {
+class Checklist extends BaseModel {
   _id?: string;
   id?: string;
   type?: string;
@@ -59,6 +60,7 @@ class Checklist {
   };
   createdAt?: Date;
   updatedAt?: Date;
+  deletedAt?: Date;
 
   get hasID() {
     return !!(this.id || this._id);
@@ -73,11 +75,12 @@ class Checklist {
         indexed: true,
       },
       id: {
-        type: 'string',
+        type: 'int',
         optional: true,
+        default: null,
       },
       type: 'string',
-      amountOfMilkProduced: 'double',
+      amountOfMilkProduced: 'int',
       numberOfCowsHead: 'int',
       hadSupervision: 'bool',
       farmer: 'farmer',
@@ -86,21 +89,25 @@ class Checklist {
       location: 'location',
       createdAt: 'date',
       updatedAt: 'date',
+      deletedAt: {
+        type: 'date',
+        default: null,
+        optional: true,
+      },
     },
   };
-
-  toJsonAPI() {
-    return snakecaseKeys(this);
-  }
-
-  convertToJSON() {
-    return JSON.stringify(this);
-  }
 
   static fromJSON(json): Checklist {
     let data;
     if (typeof json === 'string') data = JSON.parse(json);
     else data = json;
+
+    data.amountOfMilkProduced =
+      data.amountOfMilkProduced !== '' ? Number(data.amountOfMilkProduced) : '';
+    data.numberOfCowsHead =
+      data.numberOfCowsHead !== '' ? Number(data.numberOfCowsHead) : '';
+
+    data.id = data.id ? Number(data.id) : null;
 
     const checklist = new Checklist();
     Object.assign(checklist, data);
@@ -115,17 +122,23 @@ class Checklist {
     });
   }
 
+  toJsonAPI() {
+    const data = snakecaseKeys(this);
+    delete data.deleted_at;
+
+    return data;
+  }
+
   static generateDefault() {
     return Checklist.fromJSON({
-      id: '',
       type: 'BPA',
-      amountOfMilkProduced: 0,
-      numberOfCowsHead: 0,
+      amountOfMilkProduced: '',
+      numberOfCowsHead: '',
       hadSupervision: false,
       farmer: {name: '', city: ''},
       from: {name: ''},
       to: {name: ''},
-      location: {latitude: 0, longitude: 0},
+      location: {latitude: '', longitude: ''},
       createdAt: new Date(),
       updatedAt: new Date(),
     });

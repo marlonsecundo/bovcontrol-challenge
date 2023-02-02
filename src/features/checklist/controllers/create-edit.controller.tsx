@@ -9,6 +9,7 @@ const useCreateEditController = (checklist: Checklist) => {
   const navigation = useNavigation();
 
   const [type, setType] = useState(checklist.type ?? 'BPA');
+
   const [amountOfMilkProduced, setAmountOfMilkProduced] = useState(
     checklist.amountOfMilkProduced,
   );
@@ -25,8 +26,9 @@ const useCreateEditController = (checklist: Checklist) => {
   const [latitude, setLatitude] = useState(checklist.location?.latitude);
   const [longitude, setLongitude] = useState(checklist.location?.longitude);
 
-  const getChecklistInstance = () =>
-    Checklist.fromJSON({
+  const getChecklistInstance = () => {
+    return Checklist.fromJSON({
+      _id: checklist._id,
       id: checklist.id,
       type,
       amountOfMilkProduced: Number(amountOfMilkProduced),
@@ -39,7 +41,7 @@ const useCreateEditController = (checklist: Checklist) => {
       createdAt: checklist.createdAt,
       updatedAt: new Date(),
     });
-
+  };
   const handleUpdateButton = async () => {
     Toast.show({text1: 'Updating...', type: 'info'});
 
@@ -51,7 +53,7 @@ const useCreateEditController = (checklist: Checklist) => {
   const handleDeleteButton = async () => {
     Toast.show({text1: 'Deleting...', type: 'info'});
 
-    await checklistContext.destroy(checklist.id ?? '');
+    await checklistContext.destroy(getChecklistInstance());
 
     navigation.goBack();
 

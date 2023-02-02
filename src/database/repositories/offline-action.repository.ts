@@ -43,10 +43,10 @@ class OfflineActionRepository {
     });
   };
 
-  delete = async (id: string): Promise<number> => {
+  delete = async (_id: string): Promise<number> => {
     const offlineAction = await this.realm.objectForPrimaryKey(
       OfflineAction.schema.name,
-      id,
+      _id,
     );
 
     return new Promise(resolve => {

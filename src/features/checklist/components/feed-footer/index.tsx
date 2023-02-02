@@ -1,6 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {View} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import Checklist from '../../../../database/models/checklist';
 import {Container, CreateButton, PlusText} from './styles';
 
@@ -15,6 +16,14 @@ const FeedFooter: React.FC = () => {
 
   return (
     <Container>
+      <LinearGradient
+        style={{
+          flex: 1,
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+        }}
+        colors={['transparent', 'white']}></LinearGradient>
       <CreateButton onPress={handleCreateButton}>
         <PlusText>+</PlusText>
       </CreateButton>

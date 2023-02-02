@@ -1,5 +1,6 @@
 import React, {createContext, useCallback, useContext, useState} from 'react';
 import Checklist from '../../../database/models/checklist';
+import {OfflineAction} from '../../../database/models/offline-action';
 import {useRepository} from '../../../database/repository.context';
 import {useService} from '../../../shared/contexts/serivce.context';
 import {useIsOffline} from '../../../shared/hooks/useIsOffline';
@@ -14,7 +15,7 @@ interface ChecklistContextProps {
   create: (checklist: Checklist) => Promise<Checklist>;
   findAll: () => Promise<Checklist[]>;
   update: (checklist: Checklist) => Promise<Checklist>;
-  destroy: (id: string) => void;
+  destroy: (checklist: Checklist) => Promise<void>;
 }
 
 const ChecklistContext = createContext<ChecklistContextProps>(
@@ -33,10 +34,10 @@ export const ChecklistProvider: React.FC<ProviderProps> = ({children}) => {
 
     if (isOffline) {
       let realmResult = await checklistRepository.findAll();
-
       result = Checklist.fromJSONList(realmResult);
     } else {
       result = await checklistService.findAll();
+      checklistRepository.createIfEmpty(result ?? []);
     }
 
     setChecklists(result ?? []);
@@ -52,13 +53,16 @@ export const ChecklistProvider: React.FC<ProviderProps> = ({children}) => {
         await checklistRepository.create(checklist),
       );
 
-      await offlineActionRepository.create({
-        payload: newChecklist.convertToJSON(),
-        syncStatus: 'waiting',
-        type: 'create',
-      });
+      await offlineActionRepository.create(
+        OfflineAction.fromJSON({
+          payload: newChecklist.convertToJSON(),
+          syncStatus: 'waiting',
+          type: 'create',
+        }),
+      );
     } else {
       newChecklist = await checklistService.create(checklist);
+      await checklistRepository.create(newChecklist);
     }
 
     setChecklists([...checklists, newChecklist]);
@@ -66,41 +70,24 @@ export const ChecklistProvider: React.FC<ProviderProps> = ({children}) => {
     return newChecklist;
   };
 
-  const destroy = async (id: string) => {
-    let status: number | null;
-    if (isOffline) {
-      status = await checklistRepository.delete(id);
-
-      await offlineActionRepository.create({
-        payload: {id},
-        syncStatus: 'waiting',
-        type: 'delete',
-      });
-    } else {
-      status = await checklistService.delete(id);
-    }
-
-    if (status) {
-      const result = checklists.filter(c => c.id !== id);
-
-      setChecklists(result);
-    }
-  };
-
   const update = async (checklist: Checklist): Promise<Checklist> => {
     let updatedChecklist: Checklist;
 
-    if (isOffline) {
-      updatedChecklist = Checklist.fromJSON(
-        await checklistRepository.update(checklist),
-      );
+    updatedChecklist = Checklist.fromJSON(
+      await checklistRepository.update(checklist),
+    );
 
-      await offlineActionRepository.create({
-        payload: updatedChecklist.convertToJSON(),
-        syncStatus: 'waiting',
-        type: 'update',
-      });
-    } else updatedChecklist = await checklistService.update(checklist);
+    if (isOffline) {
+      await offlineActionRepository.create(
+        OfflineAction.fromJSON({
+          payload: updatedChecklist.convertToJSON(),
+          syncStatus: 'waiting',
+          type: 'update',
+        }),
+      );
+    } else {
+      updatedChecklist = await checklistService.update(checklist);
+    }
 
     const result = checklists.map(c => {
       if (c.id === updatedChecklist.id) {
@@ -113,6 +100,31 @@ export const ChecklistProvider: React.FC<ProviderProps> = ({children}) => {
     setChecklists(result);
 
     return updatedChecklist;
+  };
+
+  const destroy = async (checklist: Checklist) => {
+    let status: number | null;
+
+    status = await checklistRepository.softDelete(checklist);
+
+    if (isOffline) {
+      await offlineActionRepository.create(
+        OfflineAction.fromJSON({
+          payload: checklist.convertToJSON(),
+          syncStatus: 'waiting',
+          type: 'delete',
+        }),
+      );
+    } else {
+      status = await checklistService.delete(checklist);
+      await checklistRepository.delete(checklist);
+    }
+
+    if (status) {
+      const result = checklists.filter(c => c.id !== checklist.id);
+
+      setChecklists(result);
+    }
   };
 
   return (

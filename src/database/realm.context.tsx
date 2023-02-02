@@ -20,7 +20,7 @@ const config: Realm.Configuration = {
     locationSchema,
     toSchema,
   ],
-  schemaVersion: 9,
+  schemaVersion: 15,
 };
 
 export const RealmContext = createRealmContext(config);

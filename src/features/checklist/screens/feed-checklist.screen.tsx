@@ -6,7 +6,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import Checklist from '../../../database/models/checklist';
 import {ScreenContainer} from '../../../shared/components/screen-container';
 import {Subtitle, Title} from '../../../shared/components/text';
-import {Column} from '../../../shared/styles/layout';
+import {Column, Spacer} from '../../../shared/styles/layout';
 import ChecklistCard from '../components/checklist-card';
 import FeedFooter from '../components/feed-footer';
 import {ChecklistProvider, useChecklist} from '../contexts/checklist.context';
@@ -27,6 +27,7 @@ const FeedChecklistScreen: React.FC = () => {
           <FlatList
             data={checklists}
             renderItem={controller.handleRenderItem}
+            ListFooterComponent={<Spacer mb="70px"></Spacer>}
             refreshControl={
               <RefreshControl
                 refreshing={controller.refreshing}
