@@ -1,11 +1,5 @@
 import 'react-native-get-random-values';
 
-import {LogBox} from 'react-native';
-
-LogBox.ignoreLogs([
-  'Non-serializable values were found in the navigation state',
-]);
-
 import {ThemeProvider} from 'styled-components/native';
 import Routes from './src/routes';
 import theme from './src/shared/styles/theme';
