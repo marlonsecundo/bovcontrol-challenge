@@ -1,4 +1,5 @@
 import {OfflineAction} from '../models/offline-action';
+import {Realm} from '@realm/react';
 
 type RealmData = Record<string, unknown>;
 const {UUID} = Realm.BSON;

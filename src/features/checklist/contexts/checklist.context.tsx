@@ -1,9 +1,9 @@
 import React, {createContext, useCallback, useContext, useState} from 'react';
+import {useService} from '~/shared/contexts/service.context';
+import {useIsOffline} from '~/shared/hooks/useIsOffline';
 import Checklist from '../../../database/models/checklist';
 import {OfflineAction} from '../../../database/models/offline-action';
 import {useRepository} from '../../../database/repository.context';
-import {useService} from '../../../shared/contexts/serivce.context';
-import {useIsOffline} from '../../../shared/hooks/useIsOffline';
 
 interface ProviderProps {
   children?: React.ReactNode;

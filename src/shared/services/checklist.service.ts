@@ -1,9 +1,8 @@
-import {AxiosError} from 'axios';
+import {Axios, AxiosError} from 'axios';
 import Checklist from '../../database/models/checklist';
-import ChecklistRepository from '../../database/repositories/checklist.repository';
 import API from './api';
 
-export class ChecklistService {
+export default class ChecklistService {
   api: API;
 
   get axiosAPI() {
@@ -23,16 +22,11 @@ export class ChecklistService {
   }
 
   async create(checklist: Checklist): Promise<Checklist> {
-    try {
-      const result = await this.axiosAPI.post('/checklist', {
-        checklists: [{...checklist.toJsonAPI(), id: ''}],
-      });
+    const result = await this.axiosAPI.post('/checklist', {
+      checklists: [{...checklist.toJsonAPI(), _id: ''}],
+    });
 
-      checklist.id = result?.data.idCreate[0];
-    } catch (error) {
-      const err = error as AxiosError;
-      console.log(err.response?.data);
-    }
+    checklist.id = result?.data.idCreate[0];
 
     return checklist;
   }

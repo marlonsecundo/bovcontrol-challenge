@@ -1,7 +1,7 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {useRepository} from '../../database/repository.context';
 import API from '../services/api';
-import {ChecklistService} from '../services/checklist.service';
+import ChecklistService from '../services/checklist.service';
 
 interface ProviderProps {
   children?: React.ReactNode;

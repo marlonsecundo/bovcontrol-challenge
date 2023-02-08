@@ -1,6 +1,6 @@
 import axios, {AxiosInstance} from 'axios';
-import camelCaseKeys from 'camelcase-keys';
-import {API_URL} from '@env';
+import {API_URL} from 'react-native-dotenv';
+import {convertToCamelCase} from '~/utils/camelcase-keys';
 
 class API {
   axiosApi!: AxiosInstance;
@@ -31,9 +31,13 @@ class API {
   };
 
   camelCaseResponseConverter = (response: any) => {
-    const camelCaseData = camelCaseKeys(response.data, {deep: true});
+    let data = {};
 
-    return {...response, data: camelCaseData};
+    if (Array.isArray(response.data)) {
+      data = response.data.map(d => convertToCamelCase(d));
+    } else data = convertToCamelCase(response.data);
+
+    return {...response, data};
   };
 }
 

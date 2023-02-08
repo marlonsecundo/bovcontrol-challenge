@@ -1,4 +1,5 @@
 import Checklist from '../models/checklist';
+import {Realm} from '@realm/react';
 
 type RealmData = Record<string, unknown>;
 const {UUID} = Realm.BSON;
@@ -49,9 +50,7 @@ class ChecklistRepository {
     });
   };
 
-  findById = (
-    checklist: Checklist,
-  ): Promise<(Checklist & Realm.Object<unknown, never>) | null> => {
+  findById = (checklist: Checklist): Promise<any | null> => {
     return new Promise(resolve => {
       if (checklist._id) {
         const items = this.realm
@@ -73,7 +72,7 @@ class ChecklistRepository {
     });
   };
 
-  create = (checklist: Checklist): Promise<RealmData> => {
+  create = (checklist: Checklist): Promise<Checklist> => {
     return new Promise(resolve => {
       this.realm.write(() => {
         const result = this.realm.create(Checklist.schema.name, {
@@ -81,12 +80,12 @@ class ChecklistRepository {
           _id: new UUID(),
         });
 
-        resolve(result.toJSON());
+        resolve(result.toJSON() as any);
       });
     });
   };
 
-  update = async (data: Checklist): Promise<RealmData> => {
+  update = async (data: Checklist): Promise<Checklist> => {
     const realmData = await this.findById(data);
 
     return new Promise(resolve => {

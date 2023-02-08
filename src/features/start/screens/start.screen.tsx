@@ -1,20 +1,15 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useService} from '~/shared/contexts/service.context';
 import BovControlIcon from '../../../assets/icons/bovcontrol-icon';
 import {ButtonText, StyledButton} from '../../../shared/components/buttons';
 import {ScreenContainer} from '../../../shared/components/screen-container';
-import {useService} from '../../../shared/contexts/serivce.context';
 import {Column, CustomContainer, Row} from '../../../shared/styles/layout';
-import {
-  ChecklistProvider,
-  useChecklist,
-} from '../../checklist/contexts/checklist.context';
+import {ChecklistProvider} from '../../checklist/contexts/checklist.context';
 import {Headline, Title} from '../styles/start.styles';
 
 const StartScreen: React.FC = () => {
-  const {create, findAll, destroy, update, findById} = useChecklist();
-
   const navigation = useNavigation();
 
   const {checklistService} = useService();

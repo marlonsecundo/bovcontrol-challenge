@@ -99,6 +99,7 @@ class Checklist extends BaseModel {
 
   static fromJSON(json): Checklist {
     let data;
+
     if (typeof json === 'string') data = JSON.parse(json);
     else data = json;
 
@@ -125,6 +126,7 @@ class Checklist extends BaseModel {
   toJsonAPI() {
     const data = snakecaseKeys(this);
     delete data.deleted_at;
+    delete data.id;
 
     return data;
   }

@@ -1,7 +1,7 @@
 module.exports = {
   preset: 'react-native',
   transform: {
-    '^.+\\.jsx$': 'babel-jest',
+    '^.+\\.(js|jsx)$': 'babel-jest',
     '^.+\\.tsx?$': [
       'ts-jest',
       {
@@ -9,8 +9,11 @@ module.exports = {
       },
     ],
   },
+  moduleNameMapper: {
+    '~/(.*)': '<rootDir>/src/$1',
+  },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transformIgnorePatterns: [
-    'node_modules/(?!(jest-)?@?react-native|@react-native-community|@react-navigation|@realm/react)',
+    'node_modules/(?!(@react-native|react-native|@react-native-community|camelcase-keys|@realm/react|@env)/)',
   ],
 };

@@ -1,7 +1,12 @@
 {
   "extends": "@tsconfig/react-native/tsconfig.json",
+  "typeRoots": ["./src/@types"],
   "compilerOptions": {
     "noImplicitAny": false,
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "baseUrl": "./src", // all paths are relative to the baseUrl
+    "paths": {
+      "~/*": ["*"] // resolve any `~/foo/bar` to `<baseUrl>/foo/bar`
+    }
   }
 }

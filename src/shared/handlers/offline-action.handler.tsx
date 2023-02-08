@@ -5,7 +5,8 @@ import Checklist from '../../database/models/checklist';
 import {OfflineAction} from '../../database/models/offline-action';
 import {useRepository} from '../../database/repository.context';
 import {SequentialTaskQueue} from '../../utils/promisse-queue';
-import {useService} from '../contexts/serivce.context';
+import {useService} from '../contexts/service.context';
+
 import {useIsOffline} from '../hooks/useIsOffline';
 
 const OfflineActionHandler: React.FC = () => {
