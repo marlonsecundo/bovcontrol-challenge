@@ -5,8 +5,9 @@ import Checklist from '../../../database/models/checklist';
 import {OfflineAction} from '../../../database/models/offline-action';
 import {useRepository} from '../../../database/repository.context';
 
-interface ProviderProps {
+export interface ChecklistProviderProps {
   children?: React.ReactNode;
+  initialChecklists?: Checklist[];
 }
 
 type ChecklistEvent = {
@@ -26,10 +27,13 @@ interface ChecklistContextProps {
 
 const ChecklistContext = createContext<ChecklistContextProps>(null!);
 
-export const ChecklistProvider: React.FC<ProviderProps> = ({children}) => {
+export const ChecklistProvider: React.FC<ChecklistProviderProps> = ({
+  children,
+  initialChecklists = [],
+}) => {
   const isOffline = useIsOffline();
 
-  const [checklists, setChecklists] = useState<Checklist[]>([]);
+  const [checklists, setChecklists] = useState<Checklist[]>(initialChecklists);
   const {checklistService} = useService();
   const {checklistRepository, offlineActionRepository} = useRepository();
   const [lastEvent, setLastEvent] = useState<ChecklistEvent>({

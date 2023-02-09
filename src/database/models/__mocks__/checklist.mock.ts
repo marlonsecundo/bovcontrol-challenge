@@ -17,7 +17,7 @@ export const checklistMock = Checklist.fromJSON(
       name: 'Fernando Siqueira',
     },
     number_of_cows_head: '17',
-    had_supervision: 1,
+    had_supervision: false,
     location: {
       latitude: -23.5,
       longitude: -46.6,

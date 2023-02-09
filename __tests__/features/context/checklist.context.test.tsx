@@ -25,6 +25,7 @@ import '~/shared/contexts/__mocks__/service.context.mock';
 /** */
 import {
   ChecklistProvider,
+  ChecklistProviderProps,
   useChecklist,
 } from '~/features/checklist/contexts/checklist.context';
 import {Button} from 'react-native';
@@ -37,13 +38,7 @@ const TestComponent: React.FC = () => {
   const checklistContext = useChecklist();
 
   return (
-    <CustomView
-      testID="test-view"
-      checklists={checklistContext.checklists}
-      create={checklistContext.create}
-      update={checklistContext.update}
-      findAll={checklistContext.findAll}
-      destroy={checklistContext.destroy}>
+    <CustomView testID="test-view" checklists={checklistContext.checklists}>
       <Button
         title=""
         testID="create-button"
@@ -59,9 +54,19 @@ const TestComponent: React.FC = () => {
             }),
           )
         }></Button>
+      <Button
+        title=""
+        testID="delete-button"
+        onPress={() => checklistContext.destroy(checklistMock)}></Button>
     </CustomView>
   );
 };
+
+const TestCompWithProvider = (props: ChecklistProviderProps = {}) => (
+  <ChecklistProvider {...props}>
+    <TestComponent></TestComponent>
+  </ChecklistProvider>
+);
 
 describe('<ChecklistProvider /> Online Mode', () => {
   const testViewID = 'test-view';
@@ -72,44 +77,75 @@ describe('<ChecklistProvider /> Online Mode', () => {
 
   beforeEach(() => {});
 
-  it('provides expected ChecklistContext to child elements', () => {
-    // arrange
-
-    // act
-    const {getByTestId, container, debug} = render(
-      <ChecklistProvider>
-        <TestComponent></TestComponent>,
-      </ChecklistProvider>,
-    );
-    const testView = getByTestId(testViewID);
-
-    // assert
-    expect(testView.props).toHaveProperty('checklists', []);
-    expect(testView.props).toHaveProperty('create', expect.any(Function));
-    expect(testView.props).toHaveProperty('update', expect.any(Function));
-    expect(testView.props).toHaveProperty('findAll', expect.any(Function));
-    expect(testView.props).toHaveProperty('destroy', expect.any(Function));
-  });
-
   it('should create a new checklist', async () => {
     // arrange
     let renderer!: RenderResult;
 
     // act
+    await act(async () => {
+      await waitFor(() => {
+        renderer = render(TestCompWithProvider());
+      });
 
+      const {getByTestId} = renderer;
+
+      const createButton = getByTestId('create-button');
+
+      fireEvent.press(createButton);
+    });
+
+    const {debug, getByTestId} = renderer;
+    const testView = getByTestId(testViewID);
+
+    // assert
+    expect(testView.props['checklists']).toContainEqual(checklistMock);
+  });
+
+  it('should update a checklist', async () => {
+    // arrange
+    let renderer!: RenderResult;
+
+    // act
     await act(async () => {
       await waitFor(() => {
         renderer = render(
-          <ChecklistProvider>
-            <TestComponent></TestComponent>,
-          </ChecklistProvider>,
+          TestCompWithProvider({initialChecklists: [checklistMock]}),
         );
 
         const {getByTestId} = renderer;
 
-        const createButton = getByTestId('create-button');
+        const updateButton = getByTestId('update-button');
 
-        fireEvent.press(createButton);
+        fireEvent.press(updateButton);
+      });
+    });
+
+    const {debug, getByTestId} = renderer;
+    const testView = getByTestId(testViewID);
+
+    const updatedChecklist = checklistMock;
+    updatedChecklist.hadSupervision = true;
+
+    // assert
+    expect(testView.props['checklists']).toContainEqual(updatedChecklist);
+  });
+
+  it('should delete a checklist', async () => {
+    // arrange
+    let renderer!: RenderResult;
+
+    // act
+    await act(async () => {
+      await waitFor(() => {
+        renderer = render(
+          TestCompWithProvider({initialChecklists: [checklistMock]}),
+        );
+
+        const {getByTestId} = renderer;
+
+        const deleteButton = getByTestId('delete-button');
+
+        fireEvent.press(deleteButton);
       });
     });
 
@@ -117,6 +153,6 @@ describe('<ChecklistProvider /> Online Mode', () => {
     const testView = getByTestId(testViewID);
 
     // assert
-    expect(testView.props['checklists']).toContain(checklistMock);
+    expect(testView.props['checklists']).not.toContainEqual(checklistMock);
   });
 });
