@@ -12,9 +12,7 @@ interface RepositoryContextProps {
   offlineActionRepository: OfflineActionRepository;
 }
 
-const RepositoryContext = createContext<RepositoryContextProps>(
-  {} as RepositoryContextProps,
-);
+const RepositoryContext = createContext<RepositoryContextProps>(null!);
 
 export const RepositoryProvider: React.FC<ProviderProps> = ({children}) => {
   const realm = useRealm();

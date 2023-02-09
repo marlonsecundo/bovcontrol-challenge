@@ -10,20 +10,19 @@ class ChecklistRepository {
     this.realm = realm;
   }
 
-  createIfEmpty = async (checklists: Checklist[]) => {
-    const realmData = await this.findAll();
+  emptyAndCreate = async (checklists: Checklist[]) => {
+    this.realm.write(() => {
+      this.realm.delete(this.realm.objects(Checklist.schema.name));
+    });
 
-    // Save in Realm in the First Execution
-    if (realmData.length === 0) {
-      const promisses = Promise.all(checklists.map(r => this.create(r)));
+    const promisses = Promise.all(checklists.map(r => this.create(r)));
 
-      const created = await promisses;
+    const created = await promisses;
 
-      checklists = checklists.map((c, index) => {
-        c._id = created[index]._id as string;
-        return c;
-      });
-    }
+    checklists = checklists.map((c, index) => {
+      c._id = created[index]._id as string;
+      return c;
+    });
   };
 
   findAll = (): Promise<RealmData[]> => {

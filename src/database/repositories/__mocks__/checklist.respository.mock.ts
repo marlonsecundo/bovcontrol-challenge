@@ -6,7 +6,7 @@ jest.mock('../checklist.repository', () => {
   return function (realm: Realm) {
     return {
       realm: realm,
-      createIfEmpty: () => Promise.resolve(),
+      emptyAndCreate: () => Promise.resolve(),
       create: () => Promise.resolve(checklistMock),
       delete: () => Promise.resolve(200),
       findAll: () => Promise.resolve([]),

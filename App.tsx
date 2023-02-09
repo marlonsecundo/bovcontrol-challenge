@@ -12,6 +12,7 @@ import Toast from 'react-native-toast-message';
 import ConnectionBar from './src/shared/components/connection-bar';
 import OfflineActionHandler from './src/shared/handlers/offline-action.handler';
 import {ServiceProvider} from '~/shared/contexts/service.context';
+import ChecklistContextHandler from '~/shared/handlers/checklist-context.handler';
 
 export default function App() {
   // return <View></View>;

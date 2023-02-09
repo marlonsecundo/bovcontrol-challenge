@@ -3,6 +3,7 @@ import React from 'react';
 import {ListRenderItem, RefreshControl} from 'react-native';
 import {FlatList} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import ChecklistContextHandler from '~/shared/handlers/checklist-context.handler';
 import Checklist from '../../../database/models/checklist';
 import {ScreenContainer} from '../../../shared/components/screen-container';
 import {Subtitle, Title} from '../../../shared/components/text';
@@ -45,5 +46,6 @@ const FeedChecklistScreen: React.FC = () => {
 export default () => (
   <ChecklistProvider>
     <FeedChecklistScreen></FeedChecklistScreen>
+    <ChecklistContextHandler></ChecklistContextHandler>
   </ChecklistProvider>
 );

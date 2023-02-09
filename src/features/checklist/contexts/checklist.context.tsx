@@ -9,6 +9,11 @@ interface ProviderProps {
   children?: React.ReactNode;
 }
 
+type ChecklistEvent = {
+  type: 'findAll' | 'create' | 'delete' | 'update' | 'none';
+  time: Date;
+};
+
 interface ChecklistContextProps {
   checklists: Checklist[];
 
@@ -16,11 +21,10 @@ interface ChecklistContextProps {
   findAll: () => Promise<Checklist[]>;
   update: (checklist: Checklist) => Promise<Checklist>;
   destroy: (checklist: Checklist) => Promise<void>;
+  lastEvent: ChecklistEvent;
 }
 
-const ChecklistContext = createContext<ChecklistContextProps>(
-  {} as ChecklistContextProps,
-);
+const ChecklistContext = createContext<ChecklistContextProps>(null!);
 
 export const ChecklistProvider: React.FC<ProviderProps> = ({children}) => {
   const isOffline = useIsOffline();
@@ -28,6 +32,10 @@ export const ChecklistProvider: React.FC<ProviderProps> = ({children}) => {
   const [checklists, setChecklists] = useState<Checklist[]>([]);
   const {checklistService} = useService();
   const {checklistRepository, offlineActionRepository} = useRepository();
+  const [lastEvent, setLastEvent] = useState<ChecklistEvent>({
+    type: 'none',
+    time: new Date(),
+  });
 
   const findAll = async (): Promise<Checklist[]> => {
     let result: Checklist[] | null;
@@ -37,11 +45,11 @@ export const ChecklistProvider: React.FC<ProviderProps> = ({children}) => {
       result = Checklist.fromJSONList(realmResult);
     } else {
       result = await checklistService.findAll();
-      checklistRepository.createIfEmpty(result ?? []);
     }
 
     setChecklists(result ?? []);
 
+    setLastEvent({type: 'findAll', time: new Date()});
     return result ?? [];
   };
 
@@ -66,6 +74,7 @@ export const ChecklistProvider: React.FC<ProviderProps> = ({children}) => {
     }
 
     setChecklists([...checklists, newChecklist]);
+    setLastEvent({type: 'create', time: new Date()});
 
     return newChecklist;
   };
@@ -98,7 +107,7 @@ export const ChecklistProvider: React.FC<ProviderProps> = ({children}) => {
     });
 
     setChecklists(result);
-
+    setLastEvent({type: 'update', time: new Date()});
     return updatedChecklist;
   };
 
@@ -124,6 +133,7 @@ export const ChecklistProvider: React.FC<ProviderProps> = ({children}) => {
       const result = checklists.filter(c => c.id !== checklist.id);
 
       setChecklists(result);
+      setLastEvent({type: 'delete', time: new Date()});
     }
   };
 
@@ -135,6 +145,7 @@ export const ChecklistProvider: React.FC<ProviderProps> = ({children}) => {
         update: useCallback(update, [isOffline]),
         findAll: useCallback(findAll, [isOffline]),
         destroy: useCallback(destroy, [isOffline]),
+        lastEvent,
       }}>
       {children}
     </ChecklistContext.Provider>

@@ -10,6 +10,14 @@ class OfflineActionRepository {
     this.realm = realm;
   }
 
+  isEmpty = (): Promise<boolean> => {
+    return new Promise(resolve => {
+      const offlineActions = this.realm.objects(OfflineAction.schema.name);
+
+      resolve(offlineActions.length === 0);
+    });
+  };
+
   findAll = (): Promise<RealmData[]> => {
     return new Promise(resolve => {
       const offlineActions = this.realm.objects(OfflineAction.schema.name);

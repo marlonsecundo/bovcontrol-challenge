@@ -11,9 +11,7 @@ interface ServiceContextProps {
   checklistService: ChecklistService;
 }
 
-const ServiceContext = createContext<ServiceContextProps>(
-  {} as ServiceContextProps,
-);
+const ServiceContext = createContext<ServiceContextProps>(null!);
 
 export const ServiceProvider: React.FC<ProviderProps> = ({children}) => {
   const api = new API();

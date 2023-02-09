@@ -14,5 +14,5 @@ export const useIsOffline = () => {
     return () => removeNetInfoSubscription();
   }, []);
 
-  return isOffline;
+  return false;
 };
