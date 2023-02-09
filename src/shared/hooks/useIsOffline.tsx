@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import NetInfo from '@react-native-community/netinfo';
 
 export const useIsOffline = () => {
-  const [isOffline, setOfflineStatus] = useState(true);
+  const [isOffline, setOfflineStatus] = useState(false);
 
   useEffect(() => {
     const removeNetInfoSubscription = NetInfo.addEventListener(state => {
@@ -14,5 +14,5 @@ export const useIsOffline = () => {
     return () => removeNetInfoSubscription();
   }, []);
 
-  return false;
+  return isOffline;
 };

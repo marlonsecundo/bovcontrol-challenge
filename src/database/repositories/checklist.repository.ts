@@ -1,31 +1,19 @@
 import Checklist from '../models/checklist';
 import {Realm} from '@realm/react';
+import BaseRepository from './base-respository';
 
 type RealmData = Record<string, unknown>;
 const {UUID} = Realm.BSON;
 
-class ChecklistRepository {
+class ChecklistRepository extends BaseRepository<Checklist> {
   realm: Realm;
+
   constructor(realm: Realm) {
+    super(realm, Checklist.schema.name);
     this.realm = realm;
   }
 
-  emptyAndCreate = async (checklists: Checklist[]) => {
-    this.realm.write(() => {
-      this.realm.delete(this.realm.objects(Checklist.schema.name));
-    });
-
-    const promisses = Promise.all(checklists.map(r => this.create(r)));
-
-    const created = await promisses;
-
-    checklists = checklists.map((c, index) => {
-      c._id = created[index]._id as string;
-      return c;
-    });
-  };
-
-  findAll = (): Promise<RealmData[]> => {
+  findAllWithoutDeletion = (): Promise<RealmData[]> => {
     return new Promise(resolve => {
       const checklists = this.realm
         .objects(Checklist.schema.name)
@@ -68,19 +56,6 @@ class ChecklistRepository {
       }
 
       resolve(null);
-    });
-  };
-
-  create = (checklist: Checklist): Promise<Checklist> => {
-    return new Promise(resolve => {
-      this.realm.write(() => {
-        const result = this.realm.create(Checklist.schema.name, {
-          ...checklist,
-          _id: new UUID(),
-        });
-
-        resolve(result.toJSON() as any);
-      });
     });
   };
 

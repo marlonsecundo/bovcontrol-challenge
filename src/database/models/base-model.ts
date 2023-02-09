@@ -1,6 +1,8 @@
 import snakecaseKeys from 'snakecase-keys';
 
-export abstract class BaseModel {
+export class BaseModel {
+  _id?: string;
+
   toJsonAPI() {
     return snakecaseKeys(this);
   }

@@ -38,7 +38,8 @@ export const locationSchema = {
 };
 
 class Checklist extends BaseModel {
-  _id?: string;
+  getSchemaName = () => Checklist.schema.name;
+
   id?: string;
   type?: string;
   amountOfMilkProduced?: number;
@@ -134,13 +135,13 @@ class Checklist extends BaseModel {
   static generateDefault() {
     return Checklist.fromJSON({
       type: 'BPA',
-      amountOfMilkProduced: '',
-      numberOfCowsHead: '',
+      amountOfMilkProduced: 0,
+      numberOfCowsHead: 0,
       hadSupervision: false,
       farmer: {name: '', city: ''},
       from: {name: ''},
       to: {name: ''},
-      location: {latitude: '', longitude: ''},
+      location: {latitude: 0, longitude: 0},
       createdAt: new Date(),
       updatedAt: new Date(),
     });

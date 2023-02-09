@@ -193,8 +193,4 @@ const CreateEditChecklistScreen: React.FC<Props> = ({route}) => {
   );
 };
 
-export default props => (
-  <ChecklistProvider>
-    <CreateEditChecklistScreen {...props}></CreateEditChecklistScreen>
-  </ChecklistProvider>
-);
+export default CreateEditChecklistScreen;

@@ -5,7 +5,6 @@ export type SyncStatus = 'synced' | 'waiting' | 'error';
 export type ActionType = 'update' | 'create' | 'delete';
 
 export class OfflineAction extends BaseModel {
-  _id?: string;
   type?: ActionType;
   payload: any;
   syncStatus?: SyncStatus;

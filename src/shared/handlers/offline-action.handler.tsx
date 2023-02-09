@@ -1,6 +1,8 @@
 import React, {useCallback, useEffect, useRef} from 'react';
 import {View} from 'react-native';
+import {EventRegister} from 'react-native-event-listeners';
 import {Toast} from 'react-native-toast-message/lib/src/Toast';
+import {Events} from '~/constants/Events';
 import Checklist from '../../database/models/checklist';
 import {OfflineAction} from '../../database/models/offline-action';
 import {useRepository} from '../../database/repository.context';
@@ -26,7 +28,7 @@ const OfflineActionHandler: React.FC = () => {
 
       const newChecklist = await checklistService.create(checklist);
       await checklistRepository.update(newChecklist);
-      await offlineActionRepository.delete(offAction._id);
+      await offlineActionRepository.deleteBy_id(offAction._id);
     });
   };
 
@@ -37,7 +39,7 @@ const OfflineActionHandler: React.FC = () => {
       checklist.id = id ?? '-1';
 
       await checklistService.update(checklist);
-      await offlineActionRepository.delete(offAction._id);
+      await offlineActionRepository.deleteBy_id(offAction._id);
     });
   };
 
@@ -50,7 +52,7 @@ const OfflineActionHandler: React.FC = () => {
 
       await checklistService.delete(checklist);
       await checklistRepository.delete(checklist);
-      await offlineActionRepository.delete(offAction._id);
+      await offlineActionRepository.deleteBy_id(offAction._id);
     });
   };
 
@@ -74,6 +76,7 @@ const OfflineActionHandler: React.FC = () => {
     });
 
     await queueRef.current.run();
+    EventRegister.emit(Events.offlineActions.DONE);
   }, [isOffline]);
 
   useEffect(() => {

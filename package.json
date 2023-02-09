@@ -22,6 +22,7 @@
     "react": "18.2.0",
     "react-native": "0.71.1",
     "react-native-dotenv": "^3.4.7",
+    "react-native-event-listeners": "^1.0.7",
     "react-native-get-random-values": "^1.8.0",
     "react-native-input-select": "^0.18.0",
     "react-native-linear-gradient": "^2.6.2",

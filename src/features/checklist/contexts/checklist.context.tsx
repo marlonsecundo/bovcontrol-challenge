@@ -45,7 +45,7 @@ export const ChecklistProvider: React.FC<ChecklistProviderProps> = ({
     let result: Checklist[] | null;
 
     if (isOffline) {
-      let realmResult = await checklistRepository.findAll();
+      let realmResult = await checklistRepository.findAllWithoutDeletion();
       result = Checklist.fromJSONList(realmResult);
     } else {
       result = await checklistService.findAll();
@@ -134,7 +134,11 @@ export const ChecklistProvider: React.FC<ChecklistProviderProps> = ({
     }
 
     if (status) {
-      const result = checklists.filter(c => c.id !== checklist.id);
+      const result = checklists.filter(c => {
+        if (checklist.id) return c.id !== checklist.id;
+
+        if (checklist._id) return String(c._id) !== String(checklist._id);
+      });
 
       setChecklists(result);
       setLastEvent({type: 'delete', time: new Date()});
@@ -145,10 +149,10 @@ export const ChecklistProvider: React.FC<ChecklistProviderProps> = ({
     <ChecklistContext.Provider
       value={{
         checklists,
-        create: useCallback(create, [isOffline]),
-        update: useCallback(update, [isOffline]),
-        findAll: useCallback(findAll, [isOffline]),
-        destroy: useCallback(destroy, [isOffline]),
+        create: useCallback(create, [isOffline, checklists]),
+        update: useCallback(update, [isOffline, checklists]),
+        findAll: useCallback(findAll, [isOffline, checklists]),
+        destroy: useCallback(destroy, [isOffline, checklists]),
         lastEvent,
       }}>
       {children}

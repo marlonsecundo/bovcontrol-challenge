@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import Checklist from '~/database/models/checklist';
 import {checklistMock} from '~/database/models/__mocks__/checklist.mock';
 import ChecklistRepository from '../checklist.repository';
 
@@ -14,6 +15,10 @@ jest.mock('../checklist.repository', () => {
       getIdBy_ID: () => Promise.resolve('1'),
       softDelete: () => Promise.resolve(200),
       update: () => Promise.resolve(checklistMock),
+      deleteBy_id: () => Promise.resolve(200),
+      findAllWithoutDeletion: () => Promise.resolve([]),
+      isEmpty: () => Promise.resolve(false),
+      schemaName: Checklist.schema.name,
     } as ChecklistRepository;
   };
 });
