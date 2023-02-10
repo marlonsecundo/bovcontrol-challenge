@@ -2,6 +2,7 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 import {useRealm} from './realm.context';
 import ChecklistRepository from './repositories/checklist.repository';
 import OfflineActionRepository from './repositories/offline-action.repository';
+import RealmPlugin from 'realm-flipper-plugin-device';
 
 interface ProviderProps {
   children?: React.ReactNode;
@@ -22,6 +23,7 @@ export const RepositoryProvider: React.FC<ProviderProps> = ({children}) => {
   return (
     <RepositoryContext.Provider
       value={{checklistRepository, offlineActionRepository}}>
+      <RealmPlugin realms={[realm]} />
       {children}
     </RepositoryContext.Provider>
   );

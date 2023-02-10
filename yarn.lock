@@ -3933,7 +3933,7 @@ flat-cache@^3.0.4:
     flatted "^3.1.0"
     rimraf "^3.0.2"
 
-flatted@^3.1.0:
+flatted@^3.1.0, flatted@^3.2.7:
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.7.tgz#609f39207cb614b89d0765b477cb2d437fbf9787"
   integrity sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==
@@ -6706,6 +6706,11 @@ react-native-event-listeners@^1.0.7:
   dependencies:
     type-detect "^4.0.8"
 
+react-native-flipper@^0.179.0:
+  version "0.179.0"
+  resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.179.0.tgz#501a4fd3d62215eeff677e35cc79b6faec5270c5"
+  integrity sha512-cgN6iSBYUpwpqea3anGtuCV2J/4Zqp7YufQpd+TYVZIQ53BFQ9yteC2yP2K4doVBVPQ/w0xNzV2R4k0dXDHHgQ==
+
 react-native-get-random-values@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/react-native-get-random-values/-/react-native-get-random-values-1.8.0.tgz#1cb4bd4bd3966a356e59697b8f372999fe97cb16"
@@ -6871,6 +6876,13 @@ readline@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/readline/-/readline-1.3.0.tgz#c580d77ef2cfc8752b132498060dc9793a7ac01c"
   integrity sha512-k2d6ACCkiNYz222Fs/iNze30rRJ1iIicW7JuX/7/cozvih6YCkFZH+J6mAFDVgv0dRBaAyr4jDqC95R2y4IADg==
+
+realm-flipper-plugin-device@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/realm-flipper-plugin-device/-/realm-flipper-plugin-device-1.1.0.tgz#113ea8784f67fb299b562203d039f8accafeab7d"
+  integrity sha512-fqajcRm+8K7nUeVi4EUNYtCuVtc+e7GmhME1jKLDKNh3rXoGkvpe8g1j7lgcc8JKmw/V0AeM+N3B4SHQ/Aweng==
+  dependencies:
+    flatted "^3.2.7"
 
 realm@^11.4.0:
   version "11.4.0"

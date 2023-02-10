@@ -22,26 +22,11 @@ const ChecklistContextHandler: React.FC = () => {
           let data = fetch ? await checklistService.findAll() : checklists;
 
           await checklistRepository.emptyAndCreate(data ?? []);
-
-          console.log('DATABASE SYNCED');
         }
       }
     },
     [checklists, isOffline],
   );
-
-  const offlineActionsDoneListener = () => {
-    const listener = EventRegister.addEventListener(
-      Events.offlineActions.DONE,
-      () => {
-        syncDatabase(true);
-      },
-    );
-
-    return () => {
-      EventRegister.removeEventListener(listener.toString());
-    };
-  };
 
   useEffect(() => {
     if (lastEvent.type === 'findAll') {
@@ -49,13 +34,7 @@ const ChecklistContextHandler: React.FC = () => {
     }
   }, [lastEvent]);
 
-  useEffect(() => {
-    const dispose = offlineActionsDoneListener();
-
-    return () => {
-      dispose();
-    };
-  }, []);
+  useEffect(() => {}, []);
   return <></>;
 };
 
